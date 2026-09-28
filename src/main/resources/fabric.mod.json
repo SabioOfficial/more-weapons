@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "more_weapons",
+  "version": "${version}",
+  "name": "More Weapons",
+  "description": "more weapons and stuff, completely server-side!",
+  "authors": [],
+  "contact": {},
+  "license": "GPL-3.0",
+  "icon": "assets/more_weapons/icon.png",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      "net.sabio.more_weapons.more_weapons"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "minecraft": "${minecraft_version}"
+  }
+}
