@@ -7,11 +7,11 @@
   "authors": ["Sabio"],
   "contact": {},
   "license": "GPL-3.0",
-  "icon": "assets/more_weapons/icon.png",
+  "icon": "assets/moreweapons/icon.png",
   "environment": "server",
   "entrypoints": {
     "main": [
-      "net.sabio.more_weapons.MoreWeapons"
+      "net.sabio.moreweapons.MoreWeapons"
     ]
   },
   "depends": {
