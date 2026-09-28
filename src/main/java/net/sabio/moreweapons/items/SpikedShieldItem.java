@@ -8,6 +8,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ShieldItem;
+import net.sabio.moreweapons.MoreWeapons;
 
 public class SpikedShieldItem extends ShieldItem implements PolymerItem {
     public SpikedShieldItem(Properties properties) {
@@ -21,7 +22,7 @@ public class SpikedShieldItem extends ShieldItem implements PolymerItem {
 
     @Override
     public Identifier getPolymerItemModel(ItemStack stack, PacketContext context, HolderLookup.Provider lookup) {
-        return Identifier.fromNamespaceAndPath("moreweapons", "item/spiked_shield");
+        return MoreWeapons.id("spiked_shield");
     }
 
     public boolean isSpiked(ItemStack stack) {
