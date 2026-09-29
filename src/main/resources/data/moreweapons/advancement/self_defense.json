@@ -1,0 +1,30 @@
+{
+  "parent": "moreweapons:root",
+  "display": {
+    "icon": {
+      "id": "minecraft:shield",
+      "components": {
+        "minecraft:item_model": "moreweapons:spiked_shield"
+      }
+    },
+    "title": "Self Defense",
+    "description": "Upgrade your Shield",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_spiked_shield": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          { "items": "moreweapons:spiked_shield" }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["has_spiked_shield"]
+  ]
+}
