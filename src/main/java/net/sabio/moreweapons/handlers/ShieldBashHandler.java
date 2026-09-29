@@ -73,6 +73,10 @@ public class ShieldBashHandler {
             return true;
         }
 
+        if (!isInBlockingArc(victim, source)) {
+            return true;
+        }
+
         double speed = horizontalSpeedBps(flame);
         double bashDamage = bashDamage(speed);
 
@@ -83,6 +87,21 @@ public class ShieldBashHandler {
         activeStack.hurtAndBreak(1, victim, victim.getUsedItemHand());
 
         return false;
+    }
+
+    private static boolean isInBlockingArc(LivingEntity victim, DamageSource source) {
+        Vec3 sourcePos = source.getSourcePosition();
+        if (sourcePos == null) {
+            return false;
+        }
+
+        Vec3 view = victim.getViewVector(1.0F);
+        Vec3 facing = new Vec3(view.x, 0.0, view.z).normalize();
+
+        Vec3 toSource = sourcePos.subtract(victim.position());
+        Vec3 direction = new Vec3(toSource.x, 0.0, toSource.z).normalize();
+
+        return direction.dot(facing) >= Math.cos(Math.toRadians(90.0));
     }
 
     private static double bashDamage(double bps) {
