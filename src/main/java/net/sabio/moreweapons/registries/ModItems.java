@@ -11,6 +11,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.component.BlocksAttacks;
+import net.sabio.moreweapons.items.SlingshotItem;
 import net.sabio.moreweapons.items.SpikedShieldItem;
 
 import java.util.List;
@@ -40,8 +41,13 @@ public class ModItems {
                     .component(DataComponents.BREAK_SOUND, SoundEvents.SHIELD_BREAK)
     );
 
+    public static final SlingshotItem SLINGSHOT = (SlingshotItem) register(ModItemIds.SLINGSHOT, SlingshotItem::new, new Item.Properties());
+
     public static void initialize() {
-        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.COMBAT)
-                .register((creativeTab) -> creativeTab.accept(ModItems.SPIKED_SHIELD));
+        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.COMBAT) // TODO: fix creative inventory
+                .register((creativeTab) -> {
+                    creativeTab.accept(ModItems.SPIKED_SHIELD);
+                    creativeTab.accept(ModItems.SLINGSHOT);
+                });
     }
 }

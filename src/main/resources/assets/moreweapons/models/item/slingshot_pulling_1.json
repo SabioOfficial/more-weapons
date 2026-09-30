@@ -1,0 +1,4 @@
+{
+  "parent": "minecraft:item/bow",
+  "textures": { "layer0": "moreweapons:item/slingshot_pulling_1" }
+}

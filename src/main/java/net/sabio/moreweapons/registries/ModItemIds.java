@@ -11,4 +11,5 @@ public class ModItemIds {
     }
 
     public static final ResourceKey<Item> SPIKED_SHIELD = create("spiked_shield");
+    public static final ResourceKey<Item> SLINGSHOT = create("slingshot");
 }
