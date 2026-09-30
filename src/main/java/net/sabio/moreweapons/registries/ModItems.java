@@ -41,9 +41,10 @@ public class ModItems {
                     .component(DataComponents.BREAK_SOUND, SoundEvents.SHIELD_BREAK)
     );
 
-    public static final SlingshotItem SLINGSHOT = (SlingshotItem) register(ModItemIds.SLINGSHOT, SlingshotItem::new, new Item.Properties());
+    public static final SlingshotItem SLINGSHOT = (SlingshotItem) register(ModItemIds.SLINGSHOT, SlingshotItem::new, new Item.Properties().enchantable(1));
 
     public static void initialize() {
+        SlingshotItem.registerEvents();
         CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.COMBAT) // TODO: fix creative inventory
                 .register((creativeTab) -> {
                     creativeTab.accept(ModItems.SPIKED_SHIELD);

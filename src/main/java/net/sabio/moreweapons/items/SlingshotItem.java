@@ -1,25 +1,39 @@
 package net.sabio.moreweapons.items;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.sabio.moreweapons.MoreWeapons;
 import net.sabio.moreweapons.entities.SlingshotStone;
 
+import java.util.OptionalDouble;
+
 public class SlingshotItem extends Item implements PolymerItem {
+    public static final ResourceKey<Enchantment> MULTISTONE = ResourceKey.create(Registries.ENCHANTMENT, MoreWeapons.id("multistone"));
+
     public enum Stage {
         NONE(1.0F, 0.30, 1.0F),
         MEDIUM(2.0F, 1.00, 1.6F),
@@ -42,6 +56,8 @@ public class SlingshotItem extends Item implements PolymerItem {
         }
     }
 
+    private record Ammo(ItemStack stack, Item visualItem, double multiplier) {}
+
     public SlingshotItem(Properties properties) {
         super(properties.durability(384));
     }
@@ -58,7 +74,8 @@ public class SlingshotItem extends Item implements PolymerItem {
 
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
-        if (!player.hasInfiniteMaterials() && findCobblestone(player).isEmpty()) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (!player.hasInfiniteMaterials() && findAmmo(player, stack, level) == null) {
             return InteractionResult.FAIL;
         }
         player.startUsingItem(hand);
@@ -77,17 +94,20 @@ public class SlingshotItem extends Item implements PolymerItem {
         }
 
         boolean infinite = player.hasInfiniteMaterials();
-        ItemStack ammo = findCobblestone(player);
-        if (ammo.isEmpty() && !infinite) {
+        Ammo ammo = findAmmo(player, stack, level);
+        if (ammo == null && !infinite) {
             return false;
         }
-        if (!infinite) {
-            ammo.shrink(1);
+        if (ammo != null && !infinite) {
+            ammo.stack().shrink(1);
         }
+
+        Item visualItem = ammo != null ? ammo.visualItem() : Items.COBBLESTONE;
+        double multiplier = ammo != null ? ammo.multiplier() : 1.0;
 
         Stage stage = Stage.fromTicks(72000 - remainingUseTicks);
 
-        SlingshotStone stone = new SlingshotStone(serverLevel, player, new ItemStack(Items.COBBLESTONE), stage.damage, stage.knockback, stage == Stage.FULL);
+        SlingshotStone stone = new SlingshotStone(serverLevel, player, new ItemStack(visualItem), stage.damage * (float) multiplier, stage.knockback * multiplier, stage == Stage.FULL);
         stone.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, stage.velocity, 1.0F);
         serverLevel.addFreshEntity(stone);
 
@@ -95,6 +115,49 @@ public class SlingshotItem extends Item implements PolymerItem {
 
         stack.hurtAndBreak(1, player, player.getUsedItemHand());
         return true;
+    }
+
+    public static void registerEvents() {
+        UseBlockCallback.EVENT.register((player, level, hand, hitResult) -> {
+            ItemStack stack = player.getMainHandItem();
+            if (hand == InteractionHand.OFF_HAND && stack.getItem() instanceof SlingshotItem && hasMultistone(stack, level) && blockHardness(player.getOffhandItem(), level).isPresent()) {
+                return InteractionResult.FAIL;
+            }
+            return InteractionResult.PASS;
+        });
+    }
+
+    private static boolean hasMultistone(ItemStack stack, Level level) {
+        var holder = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).get(MULTISTONE);
+        return holder.isPresent() && EnchantmentHelper.getItemEnchantmentLevel(holder.get(), stack) > 0;
+    }
+
+    private static OptionalDouble blockHardness(ItemStack stack, Level level) {
+        if (stack.isEmpty() || !(stack.getItem() instanceof BlockItem blockItem)) {
+            return OptionalDouble.empty();
+        }
+        Block block = blockItem.getBlock();
+        if (!BuiltInRegistries.BLOCK.getKey(block).equals(BuiltInRegistries.ITEM.getKey(stack.getItem()))) {
+            return OptionalDouble.empty();
+        }
+        float hardness = block.defaultBlockState().getDestroySpeed(level, BlockPos.ZERO);
+        return hardness < 0 ? OptionalDouble.empty() : OptionalDouble.of(hardness);
+    }
+
+    private static Ammo findAmmo(Player player, ItemStack slingshot, Level level) {
+        if (hasMultistone(slingshot, level)) {
+            ItemStack offhand = player.getOffhandItem();
+            OptionalDouble hardness = blockHardness(offhand, level);
+            if (hardness.isPresent()) {
+                double multiplier = Mth.clamp(hardness.getAsDouble() / 2.0, 0.25, 2.5);
+                return new Ammo(offhand, offhand.getItem(), multiplier);
+            }
+        }
+        ItemStack cobblestone = findCobblestone(player);
+        if (!cobblestone.isEmpty()) {
+            return new Ammo(cobblestone, Items.COBBLESTONE, 1.0);
+        }
+        return null;
     }
 
     private static ItemStack findCobblestone(Player player) {
