@@ -87,7 +87,7 @@ public class SlingshotItem extends Item implements PolymerItem {
 
         Stage stage = Stage.fromTicks(72000 - remainingUseTicks);
 
-        SlingshotStone stone = new SlingshotStone(serverLevel, player, new ItemStack(Items.COBBLESTONE), stage.damage, stage.knockback);
+        SlingshotStone stone = new SlingshotStone(serverLevel, player, new ItemStack(Items.COBBLESTONE), stage.damage, stage.knockback, stage == Stage.FULL);
         stone.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, stage.velocity, 1.0F);
         serverLevel.addFreshEntity(stone);
 

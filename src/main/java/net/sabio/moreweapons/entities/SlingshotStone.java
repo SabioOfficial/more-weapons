@@ -1,5 +1,6 @@
 package net.sabio.moreweapons.entities;
 
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -13,11 +14,35 @@ import net.minecraft.world.phys.Vec3;
 public class SlingshotStone extends Snowball {
     private final float damage;
     private final double knockbackMultiplier;
+    private final boolean fullCharge;
 
-    public SlingshotStone(Level level, LivingEntity owner, ItemStack item, float damage, double knockbackMultiplier) {
+    public SlingshotStone(Level level, LivingEntity owner, ItemStack item, float damage, double knockbackMultiplier, boolean fullCharge) {
         super(level, owner, item);
         this.damage = damage;
         this.knockbackMultiplier = knockbackMultiplier;
+        this.fullCharge = fullCharge;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (fullCharge && !isRemoved() && level() instanceof ServerLevel serverLevel) {
+            Vec3 v = getDeltaMovement();
+            for (int i = 0; i < 4; i++) {
+                serverLevel.sendParticles(
+                        ParticleTypes.CRIT,
+                        getX() + v.x * i / 4.0,
+                        getY() + v.y * i / 4.0,
+                        getZ() + v.z * i / 4.0,
+                        0,
+                        -v.x,
+                        -v.y + 0.2,
+                        -v.z,
+                        1.0
+                );
+            }
+        }
     }
 
     @Override
