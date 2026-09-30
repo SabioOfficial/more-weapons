@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "moreweapons:spiked_shield"
+    "moreweapons:spiked_shield",
+    "moreweapons:slingshot"
   ]
 }

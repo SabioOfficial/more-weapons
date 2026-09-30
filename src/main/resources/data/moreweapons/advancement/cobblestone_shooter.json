@@ -1,0 +1,30 @@
+{
+  "parent": "moreweapons:root",
+  "display": {
+    "icon": {
+      "id": "minecraft:bow",
+      "components": {
+        "minecraft:item_model": "moreweapons:slingshot"
+      }
+    },
+    "title": "Cobblestone Shooter",
+    "description": "Slingshot go brrrr",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_slingshot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          { "items": "moreweapons:slingshot" }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["has_slingshot"]
+  ]
+}
