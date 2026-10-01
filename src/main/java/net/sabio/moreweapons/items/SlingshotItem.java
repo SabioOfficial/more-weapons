@@ -33,6 +33,7 @@ import java.util.OptionalDouble;
 
 public class SlingshotItem extends Item implements PolymerItem {
     public static final ResourceKey<Enchantment> MULTISTONE = ResourceKey.create(Registries.ENCHANTMENT, MoreWeapons.id("multistone"));
+    public static final ResourceKey<Enchantment> CONTROL = ResourceKey.create(Registries.ENCHANTMENT, MoreWeapons.id("control"));
 
     public enum Stage {
         NONE(1.0F, 0.30, 1.0F),
@@ -107,7 +108,9 @@ public class SlingshotItem extends Item implements PolymerItem {
 
         Stage stage = Stage.fromTicks(72000 - remainingUseTicks);
 
-        SlingshotStone stone = new SlingshotStone(serverLevel, player, new ItemStack(visualItem), stage.damage * (float) multiplier, stage.knockback * multiplier, stage == Stage.FULL);
+        int controlLevel = getLevel(stack, level, CONTROL);
+        double controlMultiplier = controlLevel > 0 ? 1.0 + 0.25 * (controlLevel + 1) : 1.0;
+        SlingshotStone stone = new SlingshotStone(serverLevel, player, new ItemStack(visualItem), stage.damage * (float) (multiplier * controlMultiplier), stage.knockback * multiplier, stage == Stage.FULL);
         stone.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, stage.velocity, 1.0F);
         serverLevel.addFreshEntity(stone);
 
@@ -127,11 +130,6 @@ public class SlingshotItem extends Item implements PolymerItem {
         });
     }
 
-    private static boolean hasMultistone(ItemStack stack, Level level) {
-        var holder = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).get(MULTISTONE);
-        return holder.isPresent() && EnchantmentHelper.getItemEnchantmentLevel(holder.get(), stack) > 0;
-    }
-
     private static OptionalDouble blockHardness(ItemStack stack, Level level) {
         if (stack.isEmpty() || !(stack.getItem() instanceof BlockItem blockItem)) {
             return OptionalDouble.empty();
@@ -142,6 +140,17 @@ public class SlingshotItem extends Item implements PolymerItem {
         }
         float hardness = block.defaultBlockState().getDestroySpeed(level, BlockPos.ZERO);
         return hardness < 0 ? OptionalDouble.empty() : OptionalDouble.of(hardness);
+    }
+
+    private static int getLevel(ItemStack stack, Level level, ResourceKey<Enchantment> key) {
+        return level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).get(key)
+                .map(holder -> EnchantmentHelper.getItemEnchantmentLevel(holder, stack))
+                .orElse(0);
+    }
+
+    private static boolean hasMultistone(ItemStack stack, Level level) {
+        var holder = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).get(MULTISTONE);
+        return holder.isPresent() && EnchantmentHelper.getItemEnchantmentLevel(holder.get(), stack) > 0;
     }
 
     private static Ammo findAmmo(Player player, ItemStack slingshot, Level level) {

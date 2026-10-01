@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.sabio.moreweapons.MoreWeapons;
 
 public class SlingshotStone extends Snowball {
     private final float damage;
@@ -57,6 +58,7 @@ public class SlingshotStone extends Snowball {
 
         DamageSource source = damageSources().thrown(this, getOwner());
         boolean hurt = target.hurtServer(serverLevel, source, damage);
+        MoreWeapons.LOGGER.info(String.valueOf(damage));
 
         if (hurt && target instanceof LivingEntity living) {
             living.setDeltaMovement(before);
