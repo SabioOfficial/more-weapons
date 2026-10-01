@@ -191,7 +191,7 @@ public class SlingshotItem extends Item implements PolymerItem {
             NonNullList<ItemStack> pouch = readPouch(slingshot);
             for (ItemStack pouched : pouch) {
                 OptionalDouble hardness = blockHardness(pouched, level);
-                if (hardness.isPresent()) {
+                if (hardness.isPresent() && isAmmoBlock(pouched, slingshot, level)) {
                     double multiplier = Mth.clamp(hardness.getAsDouble() / 2.0, 0.25, 2.5);
                     return new Ammo(pouched, pouched.getItem(), multiplier, pouch);
                 }
@@ -215,7 +215,10 @@ public class SlingshotItem extends Item implements PolymerItem {
         return ItemStack.EMPTY;
     }
 
-    static boolean isAmmoBlock(ItemStack stack, Level level) {
+    static boolean isAmmoBlock(ItemStack stack, ItemStack slingshot, Level level) {
+        if (!hasMultistone(slingshot, level)) {
+            return stack.is(Items.COBBLESTONE);
+        }
         return blockHardness(stack, level).isPresent();
     }
 

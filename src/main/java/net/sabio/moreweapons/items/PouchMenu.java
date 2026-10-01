@@ -41,7 +41,7 @@ public class PouchMenu extends AbstractContainerMenu {
                 addSlot(new Slot(container, i, 8 + i * 18, 18) {
                     @Override
                     public boolean mayPlace(ItemStack stack) {
-                        return SlingshotItem.isAmmoBlock(stack, PouchMenu.this.level);
+                        return SlingshotItem.isAmmoBlock(stack, slingshot, PouchMenu.this.level);
                     }
                 });
             } else {
