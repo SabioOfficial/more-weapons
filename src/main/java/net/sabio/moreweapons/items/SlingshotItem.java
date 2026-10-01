@@ -34,6 +34,7 @@ import java.util.OptionalDouble;
 public class SlingshotItem extends Item implements PolymerItem {
     public static final ResourceKey<Enchantment> MULTISTONE = ResourceKey.create(Registries.ENCHANTMENT, MoreWeapons.id("multistone"));
     public static final ResourceKey<Enchantment> CONTROL = ResourceKey.create(Registries.ENCHANTMENT, MoreWeapons.id("control"));
+    public static final ResourceKey<Enchantment> BURNING = ResourceKey.create(Registries.ENCHANTMENT, MoreWeapons.id("burning"));
 
     public enum Stage {
         NONE(1.0F, 0.30, 1.0F),
@@ -110,7 +111,9 @@ public class SlingshotItem extends Item implements PolymerItem {
 
         int controlLevel = getLevel(stack, level, CONTROL);
         double controlMultiplier = controlLevel > 0 ? 1.0 + 0.25 * (controlLevel + 1) : 1.0;
-        SlingshotStone stone = new SlingshotStone(serverLevel, player, new ItemStack(visualItem), stage.damage * (float) (multiplier * controlMultiplier), stage.knockback * multiplier, stage == Stage.FULL);
+        boolean burning = getLevel(stack, level, BURNING) > 0;
+
+        SlingshotStone stone = new SlingshotStone(serverLevel, player, new ItemStack(visualItem), stage.damage * (float) (multiplier * controlMultiplier), stage.knockback * multiplier, stage == Stage.FULL, burning);
         stone.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, stage.velocity, 1.0F);
         serverLevel.addFreshEntity(stone);
 

@@ -16,12 +16,17 @@ public class SlingshotStone extends Snowball {
     private final float damage;
     private final double knockbackMultiplier;
     private final boolean fullCharge;
+    private final boolean burning;
 
-    public SlingshotStone(Level level, LivingEntity owner, ItemStack item, float damage, double knockbackMultiplier, boolean fullCharge) {
+    public SlingshotStone(Level level, LivingEntity owner, ItemStack item, float damage, double knockbackMultiplier, boolean fullCharge, boolean burning) {
         super(level, owner, item);
         this.damage = damage;
         this.knockbackMultiplier = knockbackMultiplier;
         this.fullCharge = fullCharge;
+        this.burning = burning;
+        if (burning) {
+            setRemainingFireTicks(20 * 100);
+        }
     }
 
     @Override
@@ -58,7 +63,10 @@ public class SlingshotStone extends Snowball {
 
         DamageSource source = damageSources().thrown(this, getOwner());
         boolean hurt = target.hurtServer(serverLevel, source, damage);
-        MoreWeapons.LOGGER.info(String.valueOf(damage));
+
+        if (hurt && burning) {
+            target.igniteForSeconds(5.0F);
+        }
 
         if (hurt && target instanceof LivingEntity living) {
             living.setDeltaMovement(before);
