@@ -29,6 +29,14 @@ dependencies {
     implementation "eu.pb4:polymer-resource-pack:0.17.5+26.2"
 }
 
+loom {
+    runs {
+        server {
+            vmArg "-Dfabric-tag-conventions-v2.missingTagTranslationWarning=VERBOSE"
+        }
+    }
+}
+
 processResources {
     inputs.property "version", project.version
     inputs.property "minecraft_version", project.minecraft_version

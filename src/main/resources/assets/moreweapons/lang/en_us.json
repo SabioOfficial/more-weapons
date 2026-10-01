@@ -1,4 +1,5 @@
 {
   "item.moreweapons.spiked_shield": "Spiked Shield",
-  "item.moreweapons.slingshot": "Slingshot"
+  "item.moreweapons.slingshot": "Slingshot",
+  "tag.item.moreweapons.enchantable.slingshot": "Slingshot"
 }
