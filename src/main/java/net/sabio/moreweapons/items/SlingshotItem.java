@@ -1,7 +1,6 @@
 package net.sabio.moreweapons.items;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 import net.minecraft.core.BlockPos;
@@ -22,11 +21,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ClickAction;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -38,6 +34,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.sabio.moreweapons.MoreWeapons;
 import net.sabio.moreweapons.entities.SlingshotStone;
+import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 
@@ -46,8 +43,6 @@ public class SlingshotItem extends Item implements PolymerItem {
     public static final ResourceKey<Enchantment> CONTROL = ResourceKey.create(Registries.ENCHANTMENT, MoreWeapons.id("control"));
     public static final ResourceKey<Enchantment> BURNING = ResourceKey.create(Registries.ENCHANTMENT, MoreWeapons.id("burning"));
     public static final ResourceKey<Enchantment> POUCH = ResourceKey.create(Registries.ENCHANTMENT, MoreWeapons.id("pouch"));
-
-    private static final Map<UUID, ItemStack> PENDING_POUCH = new HashMap<>();
 
     public enum Stage {
         NONE(1.0F, 0.30, 1.0F),
@@ -88,13 +83,13 @@ public class SlingshotItem extends Item implements PolymerItem {
     }
 
     @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+    public @NonNull InteractionResult use(@NonNull Level level, Player player, @NonNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
         if (player.isShiftKeyDown() && getLevel(stack, level, POUCH) > 0) {
             if (player instanceof ServerPlayer serverPlayer) {
                 serverPlayer.openMenu(new SimpleMenuProvider(
-                        (containerId, inventory, p) -> new PouchMenu(containerId, inventory, stack),
+                        (containerId, inventory, _) -> new PouchMenu(containerId, inventory, stack),
                         Component.literal("Pouch")
                 ));
             }
@@ -109,12 +104,12 @@ public class SlingshotItem extends Item implements PolymerItem {
     }
 
     @Override
-    public int getUseDuration(ItemStack stack, LivingEntity entity) {
+    public int getUseDuration(@NonNull ItemStack stack, @NonNull LivingEntity entity) {
         return 72000;
     }
 
     @Override
-    public boolean releaseUsing(ItemStack stack, Level level, LivingEntity entity, int remainingUseTicks) {
+    public boolean releaseUsing(@NonNull ItemStack stack, @NonNull Level level, @NonNull LivingEntity entity, int remainingUseTicks) {
         if (!(entity instanceof Player player) || !(level instanceof ServerLevel serverLevel)) {
             return false;
         }
@@ -151,7 +146,7 @@ public class SlingshotItem extends Item implements PolymerItem {
     }
 
     public static void registerEvents() {
-        UseBlockCallback.EVENT.register((player, level, hand, hitResult) -> {
+        UseBlockCallback.EVENT.register((player, level, hand, _) -> {
             ItemStack stack = player.getMainHandItem();
             if (hand == InteractionHand.OFF_HAND && stack.getItem() instanceof SlingshotItem && hasMultistone(stack, level) && blockHardness(player.getOffhandItem(), level).isPresent()) {
                 return InteractionResult.FAIL;
