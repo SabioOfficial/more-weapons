@@ -110,7 +110,7 @@ public class SlingshotItem extends Item implements PolymerItem {
         Stage stage = Stage.fromTicks(72000 - remainingUseTicks);
 
         int controlLevel = getLevel(stack, level, CONTROL);
-        double controlMultiplier = controlLevel > 0 ? 1.0 + 0.25 * (controlLevel + 1) : 1.0;
+        double controlMultiplier = controlLevel > 0 ? 0.25 + 0.125 * (controlLevel + 1) : 0.3;
         boolean burning = getLevel(stack, level, BURNING) > 0;
 
         SlingshotStone stone = new SlingshotStone(serverLevel, player, new ItemStack(visualItem), stage.damage * (float) (multiplier * controlMultiplier), stage.knockback * multiplier, stage == Stage.FULL, burning);
