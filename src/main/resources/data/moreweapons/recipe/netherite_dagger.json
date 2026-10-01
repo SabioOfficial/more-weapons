@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:smithing_transform",
+  "template": "minecraft:netherite_upgrade_smithing_template",
+  "base": "moreweapons:diamond_dagger",
+  "addition": "minecraft:netherite_ingot",
+  "result": { "id": "moreweapons:netherite_dagger", "count": 1 }
+}

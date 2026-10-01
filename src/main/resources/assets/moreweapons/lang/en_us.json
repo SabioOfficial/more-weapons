@@ -1,5 +1,12 @@
 {
   "item.moreweapons.spiked_shield": "Spiked Shield",
   "item.moreweapons.slingshot": "Slingshot",
+  "item.moreweapons.wooden_dagger": "Wooden Dagger",
+  "item.moreweapons.golden_dagger": "Golden Dagger",
+  "item.moreweapons.stone_dagger": "Stone Dagger",
+  "item.moreweapons.copper_dagger": "Copper Dagger",
+  "item.moreweapons.iron_dagger": "Iron Dagger",
+  "item.moreweapons.diamond_dagger": "Diamond Dagger",
+  "item.moreweapons.netherite_dagger": "Netherite Dagger",
   "tag.item.moreweapons.enchantable.slingshot": "Slingshot"
 }
