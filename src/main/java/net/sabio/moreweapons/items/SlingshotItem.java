@@ -1,27 +1,37 @@
 package net.sabio.moreweapons.items;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ClickAction;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
@@ -29,12 +39,15 @@ import net.minecraft.world.level.block.Block;
 import net.sabio.moreweapons.MoreWeapons;
 import net.sabio.moreweapons.entities.SlingshotStone;
 
-import java.util.OptionalDouble;
+import java.util.*;
 
 public class SlingshotItem extends Item implements PolymerItem {
     public static final ResourceKey<Enchantment> MULTISTONE = ResourceKey.create(Registries.ENCHANTMENT, MoreWeapons.id("multistone"));
     public static final ResourceKey<Enchantment> CONTROL = ResourceKey.create(Registries.ENCHANTMENT, MoreWeapons.id("control"));
     public static final ResourceKey<Enchantment> BURNING = ResourceKey.create(Registries.ENCHANTMENT, MoreWeapons.id("burning"));
+    public static final ResourceKey<Enchantment> POUCH = ResourceKey.create(Registries.ENCHANTMENT, MoreWeapons.id("pouch"));
+
+    private static final Map<UUID, ItemStack> PENDING_POUCH = new HashMap<>();
 
     public enum Stage {
         NONE(1.0F, 0.30, 1.0F),
@@ -58,7 +71,7 @@ public class SlingshotItem extends Item implements PolymerItem {
         }
     }
 
-    private record Ammo(ItemStack stack, Item visualItem, double multiplier) {}
+    private record Ammo(ItemStack stack, Item visualItem, double multiplier, boolean fromPouch) {}
 
     public SlingshotItem(Properties properties) {
         super(properties.durability(384));
@@ -77,6 +90,17 @@ public class SlingshotItem extends Item implements PolymerItem {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+
+        if (player.isShiftKeyDown() && getLevel(stack, level, POUCH) > 0) {
+            if (player instanceof ServerPlayer serverPlayer) {
+                serverPlayer.openMenu(new SimpleMenuProvider(
+                        (containerId, inventory, p) -> new PouchMenu(containerId, inventory, stack),
+                        Component.literal("Pouch")
+                ));
+            }
+            return InteractionResult.CONSUME;
+        }
+
         if (!player.hasInfiniteMaterials() && findAmmo(player, stack, level) == null) {
             return InteractionResult.FAIL;
         }
@@ -102,6 +126,9 @@ public class SlingshotItem extends Item implements PolymerItem {
         }
         if (ammo != null && !infinite) {
             ammo.stack().shrink(1);
+            if (ammo.fromPouch()) {
+                writePouch(stack, ammo.stack());
+            }
         }
 
         Item visualItem = ammo != null ? ammo.visualItem() : Items.COBBLESTONE;
@@ -162,12 +189,20 @@ public class SlingshotItem extends Item implements PolymerItem {
             OptionalDouble hardness = blockHardness(offhand, level);
             if (hardness.isPresent()) {
                 double multiplier = Mth.clamp(hardness.getAsDouble() / 2.0, 0.25, 2.5);
-                return new Ammo(offhand, offhand.getItem(), multiplier);
+                return new Ammo(offhand, offhand.getItem(), multiplier, false);
+            }
+        }
+        if (getLevel(slingshot, level, POUCH) > 0) {
+            ItemStack pouched = readPouch(slingshot);
+            OptionalDouble hardness = blockHardness(pouched, level);
+            if (hardness.isPresent()) {
+                double multiplier = Mth.clamp(hardness.getAsDouble() / 2.0, 0.25, 2.5);
+                return new Ammo(pouched, pouched.getItem(), multiplier, true);
             }
         }
         ItemStack cobblestone = findCobblestone(player);
         if (!cobblestone.isEmpty()) {
-            return new Ammo(cobblestone, Items.COBBLESTONE, 1.0);
+            return new Ammo(cobblestone, Items.COBBLESTONE, 1.0, false);
         }
         return null;
     }
@@ -181,5 +216,23 @@ public class SlingshotItem extends Item implements PolymerItem {
             }
         }
         return ItemStack.EMPTY;
+    }
+
+    static boolean isAmmoBlock(ItemStack stack, Level level) {
+        return blockHardness(stack, level).isPresent();
+    }
+
+    static ItemStack readPouch(ItemStack slingshot) {
+        NonNullList<ItemStack> list = NonNullList.withSize(1, ItemStack.EMPTY);
+        slingshot.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).copyInto(list);
+        return list.getFirst();
+    }
+
+    static void writePouch(ItemStack slingshot, ItemStack contents) {
+        if (contents.isEmpty()) {
+            slingshot.remove(DataComponents.CONTAINER);
+        } else {
+            slingshot.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(List.of(contents)));
+        }
     }
 }
