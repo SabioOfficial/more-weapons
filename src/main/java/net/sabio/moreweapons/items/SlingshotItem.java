@@ -66,7 +66,7 @@ public class SlingshotItem extends Item implements PolymerItem {
         }
     }
 
-    private record Ammo(ItemStack stack, Item visualItem, double multiplier, boolean fromPouch) {}
+    private record Ammo(ItemStack stack, Item visualItem, double multiplier, NonNullList<ItemStack> pouch) {}
 
     public SlingshotItem(Properties properties) {
         super(properties.durability(384));
@@ -121,8 +121,8 @@ public class SlingshotItem extends Item implements PolymerItem {
         }
         if (ammo != null && !infinite) {
             ammo.stack().shrink(1);
-            if (ammo.fromPouch()) {
-                writePouch(stack, ammo.stack());
+            if (ammo.pouch() != null) {
+                writePouch(stack, ammo.pouch());
             }
         }
 
@@ -184,20 +184,22 @@ public class SlingshotItem extends Item implements PolymerItem {
             OptionalDouble hardness = blockHardness(offhand, level);
             if (hardness.isPresent()) {
                 double multiplier = Mth.clamp(hardness.getAsDouble() / 2.0, 0.25, 2.5);
-                return new Ammo(offhand, offhand.getItem(), multiplier, false);
+                return new Ammo(offhand, offhand.getItem(), multiplier, null);
             }
         }
         if (getLevel(slingshot, level, POUCH) > 0) {
-            ItemStack pouched = readPouch(slingshot);
-            OptionalDouble hardness = blockHardness(pouched, level);
-            if (hardness.isPresent()) {
-                double multiplier = Mth.clamp(hardness.getAsDouble() / 2.0, 0.25, 2.5);
-                return new Ammo(pouched, pouched.getItem(), multiplier, true);
+            NonNullList<ItemStack> pouch = readPouch(slingshot);
+            for (ItemStack pouched : pouch) {
+                OptionalDouble hardness = blockHardness(pouched, level);
+                if (hardness.isPresent()) {
+                    double multiplier = Mth.clamp(hardness.getAsDouble() / 2.0, 0.25, 2.5);
+                    return new Ammo(pouched, pouched.getItem(), multiplier, pouch);
+                }
             }
         }
         ItemStack cobblestone = findCobblestone(player);
         if (!cobblestone.isEmpty()) {
-            return new Ammo(cobblestone, Items.COBBLESTONE, 1.0, false);
+            return new Ammo(cobblestone, Items.COBBLESTONE, 1.0, null);
         }
         return null;
     }
@@ -217,17 +219,21 @@ public class SlingshotItem extends Item implements PolymerItem {
         return blockHardness(stack, level).isPresent();
     }
 
-    static ItemStack readPouch(ItemStack slingshot) {
-        NonNullList<ItemStack> list = NonNullList.withSize(1, ItemStack.EMPTY);
-        slingshot.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).copyInto(list);
-        return list.getFirst();
+    static int pouchSlots(ItemStack slingshot, Level level) {
+        return Mth.clamp(getLevel(slingshot, level, POUCH), 0, 3);
     }
 
-    static void writePouch(ItemStack slingshot, ItemStack contents) {
-        if (contents.isEmpty()) {
+    static NonNullList<ItemStack> readPouch(ItemStack slingshot) {
+        NonNullList<ItemStack> list = NonNullList.withSize(3, ItemStack.EMPTY);
+        slingshot.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).copyInto(list);
+        return list;
+    }
+
+    static void writePouch(ItemStack slingshot, List<ItemStack> contents) {
+        if (contents.stream().allMatch(ItemStack::isEmpty)) {
             slingshot.remove(DataComponents.CONTAINER);
         } else {
-            slingshot.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(List.of(contents)));
+            slingshot.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(contents));
         }
     }
 }

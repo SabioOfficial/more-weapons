@@ -2,10 +2,10 @@
   "description": { "text": "Pouch" },
   "supported_items": "#moreweapons:enchantable/slingshot",
   "primary_items": "#moreweapons:enchantable/slingshot",
-  "weight": 2,
-  "max_level": 1,
-  "min_cost": { "base": 15, "per_level_above_first": 0 },
-  "max_cost": { "base": 45, "per_level_above_first": 0 },
+  "weight": 6,
+  "max_level": 3,
+  "min_cost": { "base": 15, "per_level_above_first": 10 },
+  "max_cost": { "base": 45, "per_level_above_first": 10 },
   "anvil_cost": 6,
   "slots": ["mainhand"]
 }

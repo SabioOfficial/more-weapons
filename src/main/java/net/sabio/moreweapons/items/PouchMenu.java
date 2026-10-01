@@ -1,5 +1,6 @@
 package net.sabio.moreweapons.items;
 
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
@@ -13,22 +14,30 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class PouchMenu extends AbstractContainerMenu {
     private final ItemStack slingshot;
     private final Level level;
+    private static final int[][] LAYOUT = {{}, {4}, {3, 5}, {3, 4, 5}};
+    private final int[] open;
     private final SimpleContainer container = new SimpleContainer(9);
 
     public PouchMenu(int containerId, Inventory inventory, ItemStack slingshot) {
         super(MenuType.GENERIC_9x1, containerId);
         this.slingshot = slingshot;
         this.level = inventory.player.level();
+        this.open = LAYOUT[SlingshotItem.pouchSlots(slingshot, level)];
+        NonNullList<ItemStack> stored = SlingshotItem.readPouch(slingshot);
 
         ItemStack pane = new ItemStack(Items.STAINED_GLASS_PANE.gray());
         pane.set(DataComponents.CUSTOM_NAME, Component.literal("Disabled Slot"));
 
         for (int i = 0; i < 9; i++) {
-            if (i == 4) {
-                container.setItem(i, SlingshotItem.readPouch(slingshot));
+            int pouchIdx = Arrays.binarySearch(open, i);
+            if (pouchIdx >= 0) {
+                container.setItem(i, stored.get(pouchIdx));
                 addSlot(new Slot(container, i, 8 + i * 18, 18) {
                     @Override
                     public boolean mayPlace(ItemStack stack) {
@@ -60,7 +69,7 @@ public class PouchMenu extends AbstractContainerMenu {
             addSlot(new GuardedSlot(inventory, col, 8 + col * 18, 107));
         }
 
-        SlingshotItem.writePouch(slingshot, ItemStack.EMPTY);
+        SlingshotItem.writePouch(slingshot, List.of());
     }
 
     private class GuardedSlot extends Slot {
@@ -93,7 +102,7 @@ public class PouchMenu extends AbstractContainerMenu {
             if (!moveItemStackTo(stack, 9, slots.size(), true)) {
                 return ItemStack.EMPTY;
             }
-        } else if (!moveItemStackTo(stack, 4, 5, false)) {
+        } else if (!moveItemStackTo(stack, open[0], open[open.length - 1] + 1, false)) {
             return ItemStack.EMPTY;
         }
 
@@ -114,13 +123,19 @@ public class PouchMenu extends AbstractContainerMenu {
     public void removed(Player player) {
         super.removed(player);
 
-        ItemStack contents = container.getItem(4);
-        container.setItem(4, ItemStack.EMPTY);
+        NonNullList<ItemStack> contents = NonNullList.withSize(3, ItemStack.EMPTY);
+        for (int p = 0; p < open.length; p++) {
+            contents.set(p, container.removeItemNoUpdate(open[p]));
+        }
 
         if (stillHeld(player)) {
             SlingshotItem.writePouch(slingshot, contents);
-        } else if (!contents.isEmpty()) {
-            player.getInventory().placeItemBackInInventory(contents);
+        } else {
+            for (ItemStack leftover : contents) {
+                if (!leftover.isEmpty()) {
+                    player.getInventory().placeItemBackInInventory(leftover);
+                }
+            }
         }
     }
 
