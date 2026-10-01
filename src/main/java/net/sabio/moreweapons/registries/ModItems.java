@@ -10,7 +10,10 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.component.BlocksAttacks;
+import net.sabio.moreweapons.items.DaggerItem;
 import net.sabio.moreweapons.items.SlingshotItem;
 import net.sabio.moreweapons.items.SpikedShieldItem;
 
@@ -27,6 +30,8 @@ public class ModItems {
         return item;
     }
 
+    /** Defensive **/
+
     public static final SpikedShieldItem SPIKED_SHIELD = (SpikedShieldItem) register(
             ModItemIds.SPIKED_SHIELD,
             SpikedShieldItem::new,
@@ -41,7 +46,23 @@ public class ModItems {
                     .component(DataComponents.BREAK_SOUND, SoundEvents.SHIELD_BREAK)
     );
 
+    /** Ranged **/
+
     public static final SlingshotItem SLINGSHOT = (SlingshotItem) register(ModItemIds.SLINGSHOT, SlingshotItem::new, new Item.Properties().enchantable(1));
+
+    /** Melee **/
+
+    /* Daggers */
+
+    public static final Item WOODEN_DAGGER = register(ModItemIds.WOODEN_DAGGER, properties -> new DaggerItem(properties, Items.WOODEN_SWORD), DaggerItem.properties(ToolMaterial.WOOD));
+    public static final Item GOLDEN_DAGGER = register(ModItemIds.GOLDEN_DAGGER, properties -> new DaggerItem(properties, Items.GOLDEN_SWORD), DaggerItem.properties(ToolMaterial.GOLD));
+    public static final Item STONE_DAGGER = register(ModItemIds.STONE_DAGGER, properties -> new DaggerItem(properties, Items.STONE_SWORD), DaggerItem.properties(ToolMaterial.STONE));
+    public static final Item COPPER_DAGGER = register(ModItemIds.COPPER_DAGGER, properties -> new DaggerItem(properties, Items.COPPER_SWORD), DaggerItem.properties(ToolMaterial.COPPER));
+    public static final Item IRON_DAGGER = register(ModItemIds.IRON_DAGGER, properties -> new DaggerItem(properties, Items.IRON_SWORD), DaggerItem.properties(ToolMaterial.IRON));
+    public static final Item DIAMOND_DAGGER = register(ModItemIds.DIAMOND_DAGGER, properties -> new DaggerItem(properties, Items.DIAMOND_SWORD), DaggerItem.properties(ToolMaterial.DIAMOND));
+    public static final Item NETHERITE_DAGGER = register(ModItemIds.NETHERITE_DAGGER, properties -> new DaggerItem(properties, Items.NETHERITE_SWORD), DaggerItem.properties(ToolMaterial.NETHERITE));
+
+    private static final List<Item> DAGGERS = List.of(WOODEN_DAGGER, GOLDEN_DAGGER, STONE_DAGGER, COPPER_DAGGER, IRON_DAGGER, DIAMOND_DAGGER, NETHERITE_DAGGER);
 
     public static void initialize() {
         SlingshotItem.registerEvents();
@@ -49,6 +70,7 @@ public class ModItems {
                 .register((creativeTab) -> {
                     creativeTab.accept(ModItems.SPIKED_SHIELD);
                     creativeTab.accept(ModItems.SLINGSHOT);
+                    for (Item dagger : DAGGERS) creativeTab.accept(dagger);
                 });
     }
 }
