@@ -2,13 +2,26 @@ package net.sabio.moreweapons.handlers;
 
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.protocol.game.ClientboundCooldownPacket;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.BlocksAttacks;
+import net.minecraft.world.item.component.Weapon;
 import net.minecraft.world.phys.Vec3;
 import net.sabio.moreweapons.items.SpikedShieldItem;
 
@@ -17,10 +30,17 @@ import java.util.*;
 public class ShieldBashHandler {
     private static final Map<UUID, ArrayDeque<Vec3>> HISTORY = new HashMap<>();
     private static final Map<UUID, Double> PLAYER_BPS = new HashMap<>();
+    private static final Set<UUID> CHARGED_SWINGS = new HashSet<>();
 
     public static void register() {
         ServerLivingEntityEvents.ALLOW_DAMAGE.register(ShieldBashHandler::onIncomingAttack);
         ServerTickEvents.END_SERVER_TICK.register(ShieldBashHandler::onServerTick);
+        AttackEntityCallback.EVENT.register((player, level, hand, entity, hitResult) -> {
+            if (!level.isClientSide() && player.getAttackStrengthScale(0.5F) >= 1.0F) {
+                CHARGED_SWINGS.add(player.getUUID());
+            }
+            return InteractionResult.PASS;
+        });
     }
 
     private static void onServerTick(MinecraftServer server) {
@@ -45,6 +65,7 @@ public class ShieldBashHandler {
         }
         HISTORY.keySet().retainAll(online);
         PLAYER_BPS.keySet().retainAll(online);
+        CHARGED_SWINGS.clear();
     }
 
     private static boolean onIncomingAttack(LivingEntity victim, DamageSource source, float amount) {
@@ -77,6 +98,10 @@ public class ShieldBashHandler {
             return true;
         }
 
+        if (tryAxeDisable(level, victim, flame, activeStack)) {
+            return false;
+        }
+
         double speed = horizontalSpeedBps(flame);
         double bashDamage = bashDamage(speed);
 
@@ -87,6 +112,20 @@ public class ShieldBashHandler {
         activeStack.hurtAndBreak(1, victim, victim.getUsedItemHand());
 
         return false;
+    }
+
+    private static boolean tryAxeDisable(ServerLevel level, LivingEntity victim, LivingEntity attacker, ItemStack shield) {
+        if (!attacker.getMainHandItem().is(ItemTags.AXES)) return false;
+
+        if (attacker instanceof Player player && !CHARGED_SWINGS.contains(player.getUUID())) return false;
+
+        victim.stopUsingItem();
+        if (victim instanceof ServerPlayer serverPlayer) {
+            serverPlayer.getCooldowns().addCooldown(shield, 100);
+            serverPlayer.connection.send(new ClientboundCooldownPacket(Identifier.withDefaultNamespace("shield"), 100));
+        }
+        level.playSound(null, victim.getX(), victim.getY(), victim.getZ(), SoundEvents.SHIELD_BREAK, SoundSource.PLAYERS, 0.8F, 0.8F + level.getRandom().nextFloat() * 0.4F);
+        return true;
     }
 
     private static boolean isInBlockingArc(LivingEntity victim, DamageSource source) {
