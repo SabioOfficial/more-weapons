@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.sabio.moreweapons.MoreWeapons;
+import org.jspecify.annotations.NonNull;
 
 public class SlingshotStone extends Snowball {
     private final float damage;
@@ -52,7 +52,7 @@ public class SlingshotStone extends Snowball {
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult result) {
+    protected void onHitEntity(@NonNull EntityHitResult result) {
         if (!(level() instanceof ServerLevel serverLevel)) {
             return;
         }

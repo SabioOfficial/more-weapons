@@ -27,6 +27,7 @@ dependencies {
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     implementation "eu.pb4:polymer-core:0.17.5+26.2"
     implementation "eu.pb4:polymer-resource-pack:0.17.5+26.2"
+    implementation "eu.pb4:polymer-virtual-entity:0.17.5+26.2"
 }
 
 loom {
