@@ -1,0 +1,30 @@
+{
+  "parent": "moreweapons:getting_a_short_upgrade",
+  "display": {
+    "icon": {
+      "id": "minecraft:iron_sword",
+      "components": {
+        "minecraft:item_model": "moreweapons:iron_dagger"
+      }
+    },
+    "title": "Isn't It Iron Dagger?",
+    "description": "Have an iron dagger in the inventory.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_iron_dagger": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          { "items": "moreweapons:iron_dagger" }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["has_iron_dagger"]
+  ]
+}

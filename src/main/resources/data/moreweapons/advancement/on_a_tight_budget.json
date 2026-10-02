@@ -1,0 +1,30 @@
+{
+  "parent": "moreweapons:isnt_it_iron_dagger",
+  "display": {
+    "icon": {
+      "id": "minecraft:diamond_sword",
+      "components": {
+        "minecraft:item_model": "moreweapons:diamond_dagger"
+      }
+    },
+    "title": "On a Tight Budget",
+    "description": "Have a diamond dagger in the inventory.",
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_diamond_dagger": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          { "items": "moreweapons:diamond_dagger" }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["has_diamond_dagger"]
+  ]
+}

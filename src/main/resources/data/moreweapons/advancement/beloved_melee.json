@@ -1,0 +1,30 @@
+{
+  "parent": "moreweapons:on_a_tight_budget",
+  "display": {
+    "icon": {
+      "id": "minecraft:netherite_sword",
+      "components": {
+        "minecraft:item_model": "moreweapons:netherite_dagger"
+      }
+    },
+    "title": "Beloved Melee",
+    "description": "Use a Netherite Ingot to upgrade a Dagger, and then love it for all of eternity",
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_netherite_dagger": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          { "items": "moreweapons:netherite_dagger" }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["has_netherite_dagger"]
+  ]
+}

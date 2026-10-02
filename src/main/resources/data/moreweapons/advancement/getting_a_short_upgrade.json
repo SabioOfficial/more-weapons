@@ -1,0 +1,30 @@
+{
+  "parent": "moreweapons:shortie",
+  "display": {
+    "icon": {
+      "id": "minecraft:stone_sword",
+      "components": {
+        "minecraft:item_model": "moreweapons:stone_dagger"
+      }
+    },
+    "title": "Getting a Short Upgrade",
+    "description": "Have a stone dagger in the inventory.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_stone_dagger": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          { "items": "moreweapons:stone_dagger" }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["has_stone_dagger"]
+  ]
+}

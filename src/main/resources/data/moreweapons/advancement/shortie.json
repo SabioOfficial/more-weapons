@@ -1,0 +1,30 @@
+{
+  "parent": "moreweapons:root",
+  "display": {
+    "icon": {
+      "id": "minecraft:wooden_sword",
+      "components": {
+        "minecraft:item_model": "moreweapons:wooden_dagger"
+      }
+    },
+    "title": "Shortie",
+    "description": "Have a wooden dagger in the inventory.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_wooden_dagger": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          { "items": "moreweapons:wooden_dagger" }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["has_wooden_dagger"]
+  ]
+}
