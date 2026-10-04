@@ -16,16 +16,3 @@ site:
           default: true
           content:
             directory: ./documentation
-    - type: section
-      key: section-4
-      title: Help Center
-      path: help-center
-      icon: life-ring
-      children:
-        - type: space
-          key: space-4
-          title: Help Center
-          path: help-center
-          default: true
-          content:
-            directory: ./help-center
