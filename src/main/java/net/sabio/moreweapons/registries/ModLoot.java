@@ -13,6 +13,7 @@ import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.SetEnchantmentsFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.sabio.moreweapons.items.SlingshotItem;
 
 import java.util.Set;
@@ -39,14 +40,26 @@ public class ModLoot {
                 return;
             }
 
+            Holder<Enchantment> burning = holder.lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(SlingshotItem.BURNING);
+            Holder<Enchantment> control = holder.lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(SlingshotItem.CONTROL);
             Holder<Enchantment> multistone = holder.lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(SlingshotItem.MULTISTONE);
+            Holder<Enchantment> pouch = holder.lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(SlingshotItem.POUCH);
 
             tableBuilder.withPool(LootPool.lootPool()
                     .setRolls(ConstantValue.exactly(1))
                     .when(LootItemRandomChanceCondition.randomChance(0.15F))
                     .add(LootItem.lootTableItem(Items.ENCHANTED_BOOK)
                             .apply(new SetEnchantmentsFunction.Builder()
-                                    .withEnchantment(multistone, ConstantValue.exactly(1)))));
+                                    .withEnchantment(burning, ConstantValue.exactly(1))))
+                    .add(LootItem.lootTableItem(Items.ENCHANTED_BOOK)
+                            .apply(new SetEnchantmentsFunction.Builder()
+                                    .withEnchantment(control, UniformGenerator.between(1, 5))))
+                    .add(LootItem.lootTableItem(Items.ENCHANTED_BOOK)
+                            .apply(new SetEnchantmentsFunction.Builder()
+                                    .withEnchantment(multistone, ConstantValue.exactly(1))))
+                    .add(LootItem.lootTableItem(Items.ENCHANTED_BOOK)
+                            .apply(new SetEnchantmentsFunction.Builder()
+                                    .withEnchantment(pouch, UniformGenerator.between(1, 3)))));
         });
     }
 }
