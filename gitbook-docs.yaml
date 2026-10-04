@@ -1,0 +1,12 @@
+$schema: https://api.gitbook.com/gitbook-docs.yaml
+site:
+  title: Documentation
+  structure:
+    - type: space
+      key: documentation
+      title: Documentation
+      path: documentation
+      default: true
+      content:
+        directory: ./docs/en
+        language: en
