@@ -8,5 +8,12 @@
   "item.moreweapons.iron_dagger": "Iron Dagger",
   "item.moreweapons.diamond_dagger": "Diamond Dagger",
   "item.moreweapons.netherite_dagger": "Netherite Dagger",
+  "item.moreweapons.wooden_scythe": "Wooden Scythe",
+  "item.moreweapons.golden_scythe": "Golden Scythe",
+  "item.moreweapons.stone_scythe": "Stone Scythe",
+  "item.moreweapons.copper_scythe": "Copper Scythe",
+  "item.moreweapons.iron_scythe": "Iron Scythe",
+  "item.moreweapons.diamond_scythe": "Diamond Scythe",
+  "item.moreweapons.netherite_scythe": "Netherite Scythe",
   "tag.item.moreweapons.enchantable.slingshot": "Slingshot"
 }

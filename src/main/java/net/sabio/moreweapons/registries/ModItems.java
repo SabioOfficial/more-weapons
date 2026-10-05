@@ -14,6 +14,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.component.BlocksAttacks;
 import net.sabio.moreweapons.items.DaggerItem;
+import net.sabio.moreweapons.items.ScytheItem;
 import net.sabio.moreweapons.items.SlingshotItem;
 import net.sabio.moreweapons.items.SpikedShieldItem;
 
@@ -64,6 +65,18 @@ public class ModItems {
 
     private static final List<Item> DAGGERS = List.of(WOODEN_DAGGER, GOLDEN_DAGGER, STONE_DAGGER, COPPER_DAGGER, IRON_DAGGER, DIAMOND_DAGGER, NETHERITE_DAGGER);
 
+    /* Scythes */
+
+    public static final Item WOODEN_SCYTHE = register(ModItemIds.WOODEN_SCYTHE, properties -> new ScytheItem(properties, Items.WOODEN_SWORD), ScytheItem.properties(ToolMaterial.WOOD, 8.0));
+    public static final Item GOLDEN_SCYTHE = register(ModItemIds.GOLDEN_SCYTHE, properties -> new ScytheItem(properties, Items.GOLDEN_SWORD), ScytheItem.properties(ToolMaterial.GOLD, 8.0));
+    public static final Item STONE_SCYTHE = register(ModItemIds.STONE_SCYTHE, properties -> new ScytheItem(properties, Items.STONE_SWORD), ScytheItem.properties(ToolMaterial.STONE, 10.0));
+    public static final Item COPPER_SCYTHE = register(ModItemIds.COPPER_SCYTHE, properties -> new ScytheItem(properties, Items.COPPER_SWORD), ScytheItem.properties(ToolMaterial.COPPER, 10.0));
+    public static final Item IRON_SCYTHE = register(ModItemIds.IRON_SCYTHE, properties -> new ScytheItem(properties, Items.IRON_SWORD), ScytheItem.properties(ToolMaterial.IRON, 10.0));
+    public static final Item DIAMOND_SCYTHE = register(ModItemIds.DIAMOND_SCYTHE, properties -> new ScytheItem(properties, Items.DIAMOND_SWORD), ScytheItem.properties(ToolMaterial.DIAMOND, 10.0));
+    public static final Item NETHERITE_SCYTHE = register(ModItemIds.NETHERITE_SCYTHE, properties -> new ScytheItem(properties, Items.NETHERITE_SWORD), ScytheItem.properties(ToolMaterial.NETHERITE, 11.0));
+
+    private static final List<Item> SCYTHES = List.of(WOODEN_SCYTHE, GOLDEN_SCYTHE, STONE_SCYTHE, COPPER_SCYTHE, IRON_SCYTHE, DIAMOND_SCYTHE, NETHERITE_SCYTHE);
+
     public static void initialize() {
         SlingshotItem.registerEvents();
         CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.COMBAT) // TODO: fix creative inventory
@@ -71,6 +84,7 @@ public class ModItems {
                     creativeTab.accept(ModItems.SPIKED_SHIELD);
                     creativeTab.accept(ModItems.SLINGSHOT);
                     for (Item dagger : DAGGERS) creativeTab.accept(dagger);
+                    for (Item scythe : SCYTHES) creativeTab.accept(scythe);
                 });
     }
 }

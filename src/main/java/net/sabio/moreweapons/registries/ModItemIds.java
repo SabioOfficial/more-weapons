@@ -29,4 +29,14 @@ public class ModItemIds {
     public static final ResourceKey<Item> IRON_DAGGER = create("iron_dagger");
     public static final ResourceKey<Item> DIAMOND_DAGGER = create("diamond_dagger");
     public static final ResourceKey<Item> NETHERITE_DAGGER = create("netherite_dagger");
+
+    /* Scythe */
+
+    public static final ResourceKey<Item> WOODEN_SCYTHE = create("wooden_scythe");
+    public static final ResourceKey<Item> GOLDEN_SCYTHE = create("golden_scythe");
+    public static final ResourceKey<Item> STONE_SCYTHE = create("stone_scythe");
+    public static final ResourceKey<Item> COPPER_SCYTHE = create("copper_scythe");
+    public static final ResourceKey<Item> IRON_SCYTHE = create("iron_scythe");
+    public static final ResourceKey<Item> DIAMOND_SCYTHE = create("diamond_scythe");
+    public static final ResourceKey<Item> NETHERITE_SCYTHE = create("netherite_scythe");
 }

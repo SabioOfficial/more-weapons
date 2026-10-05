@@ -7,6 +7,13 @@
     "moreweapons:copper_dagger",
     "moreweapons:iron_dagger",
     "moreweapons:diamond_dagger",
-    "moreweapons:netherite_dagger"
+    "moreweapons:netherite_dagger",
+    "moreweapons:wooden_scythe",
+    "moreweapons:golden_scythe",
+    "moreweapons:stone_scythe",
+    "moreweapons:copper_scythe",
+    "moreweapons:iron_scythe",
+    "moreweapons:diamond_scythe",
+    "moreweapons:netherite_scythe"
   ]
 }
