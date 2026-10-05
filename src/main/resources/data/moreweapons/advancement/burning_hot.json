@@ -1,0 +1,30 @@
+{
+  "parent": "moreweapons:cobblestone_shooter",
+  "display": {
+    "icon": { "id": "minecraft:fire_charge" },
+    "title": "Burning Hot",
+    "description": "Enchant the Burning enchantment onto a Slingshot",
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_burning_slingshot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "moreweapons:slingshot",
+            "predicates": {
+              "minecraft:enchantments": [{ "enchantments": "moreweapons:burning" }]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["has_burning_slingshot"]
+  ]
+}

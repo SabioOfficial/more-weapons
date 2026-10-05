@@ -1,0 +1,30 @@
+{
+  "parent": "moreweapons:cobblestone_shooter",
+  "display": {
+    "icon": { "id": "minecraft:gravel" },
+    "title": "No Rocks Left Behind!",
+    "description": "Enchant the Multistone enchantment onto a Slingshot",
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_multistone_slingshot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "moreweapons:slingshot",
+            "predicates": {
+              "minecraft:enchantments": [{ "enchantments": "moreweapons:multistone" }]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["has_multistone_slingshot"]
+  ]
+}

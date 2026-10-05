@@ -1,0 +1,30 @@
+{
+  "parent": "moreweapons:cobblestone_shooter",
+  "display": {
+    "icon": { "id": "minecraft:target" },
+    "title": "Steady Hands",
+    "description": "Enchant the Control enchantment onto a Slingshot",
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_control_slingshot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "moreweapons:slingshot",
+            "predicates": {
+              "minecraft:enchantments": [{ "enchantments": "moreweapons:control" }]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["has_control_slingshot"]
+  ]
+}
