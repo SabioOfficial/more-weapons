@@ -1,0 +1,30 @@
+{
+  "parent": "moreweapons:rock_paper_scythe",
+  "display": {
+    "icon": {
+      "id": "minecraft:iron_sword",
+      "components": {
+        "minecraft:item_model": "moreweapons:iron_scythe"
+      }
+    },
+    "title": "Ol' Reliable",
+    "description": "Have an iron scythe in the inventory.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_iron_scythe": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          { "items": "moreweapons:iron_scythe" }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["has_iron_scythe"]
+  ]
+}

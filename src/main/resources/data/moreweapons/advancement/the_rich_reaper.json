@@ -1,0 +1,30 @@
+{
+  "parent": "moreweapons:ol_reliable",
+  "display": {
+    "icon": {
+      "id": "minecraft:diamond_sword",
+      "components": {
+        "minecraft:item_model": "moreweapons:diamond_scythe"
+      }
+    },
+    "title": "The Rich Reaper",
+    "description": "Have a diamond scythe in the inventory.",
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_diamond_scythe": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          { "items": "moreweapons:diamond_scythe" }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["has_diamond_scythe"]
+  ]
+}

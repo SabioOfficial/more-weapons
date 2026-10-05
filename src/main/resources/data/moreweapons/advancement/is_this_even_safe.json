@@ -1,0 +1,30 @@
+{
+  "parent": "moreweapons:root",
+  "display": {
+    "icon": {
+      "id": "minecraft:wooden_sword",
+      "components": {
+        "minecraft:item_model": "moreweapons:wooden_scythe"
+      }
+    },
+    "title": "Is This Even Safe?",
+    "description": "Have a wooden scythe in the inventory.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_wooden_scythe": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          { "items": "moreweapons:wooden_scythe" }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["has_wooden_scythe"]
+  ]
+}

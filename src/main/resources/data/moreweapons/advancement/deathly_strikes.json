@@ -1,0 +1,30 @@
+{
+  "parent": "moreweapons:the_rich_reaper",
+  "display": {
+    "icon": {
+      "id": "minecraft:netherite_sword",
+      "components": {
+        "minecraft:item_model": "moreweapons:netherite_scythe"
+      }
+    },
+    "title": "Deathly Strikes",
+    "description": "Have a netherite scythe in the inventory.",
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_netherite_scythe": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          { "items": "moreweapons:netherite_scythe" }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["has_netherite_scythe"]
+  ]
+}

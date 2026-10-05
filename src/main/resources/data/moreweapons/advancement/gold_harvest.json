@@ -1,0 +1,30 @@
+{
+  "parent": "moreweapons:is_this_even_safe",
+  "display": {
+    "icon": {
+      "id": "minecraft:golden_sword",
+      "components": {
+        "minecraft:item_model": "moreweapons:golden_scythe"
+      }
+    },
+    "title": "Gold Harvest",
+    "description": "Have a golden scythe in the inventory.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_golden_scythe": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          { "items": "moreweapons:golden_scythe" }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["has_golden_scythe"]
+  ]
+}

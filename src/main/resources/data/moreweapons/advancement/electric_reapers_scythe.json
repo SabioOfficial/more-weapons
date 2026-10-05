@@ -1,0 +1,30 @@
+{
+  "parent": "moreweapons:rock_paper_scythe",
+  "display": {
+    "icon": {
+      "id": "minecraft:copper_sword",
+      "components": {
+        "minecraft:item_model": "moreweapons:copper_scythe"
+      }
+    },
+    "title": "Electric Reaper's Scythe",
+    "description": "Have a copper scythe in the inventory.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_copper_scythe": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          { "items": "moreweapons:copper_scythe" }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["has_copper_scythe"]
+  ]
+}

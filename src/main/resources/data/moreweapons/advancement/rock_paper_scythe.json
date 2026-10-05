@@ -1,0 +1,30 @@
+{
+  "parent": "moreweapons:is_this_even_safe",
+  "display": {
+    "icon": {
+      "id": "minecraft:stone_sword",
+      "components": {
+        "minecraft:item_model": "moreweapons:stone_scythe"
+      }
+    },
+    "title": "Rock, Paper, Scythe?",
+    "description": "Have a stone scythe in the inventory.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_stone_scythe": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          { "items": "moreweapons:stone_scythe" }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["has_stone_scythe"]
+  ]
+}
